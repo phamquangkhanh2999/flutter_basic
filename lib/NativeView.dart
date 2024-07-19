@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class LoginScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
+  @override
+  _MainScreenState createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
   static const platform = MethodChannel('login_plugin');
+  List<String> dataList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    platform.setMethodCallHandler(_handleMethod);
+  }
 
   Future<void> _showNativeLogin(BuildContext context) async {
     try {
@@ -15,8 +27,8 @@ class LoginScreen extends StatelessWidget {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                HomeScreen(username: username, password: password),
+            builder: (context) => HomeScreen(
+                username: username, password: password, dataList: dataList),
           ),
         );
       }
@@ -25,11 +37,19 @@ class LoginScreen extends StatelessWidget {
     }
   }
 
+  Future<dynamic> _handleMethod(MethodCall call) async {
+    if (call.method == 'onDataListFetched') {
+      setState(() {
+        dataList = List<String>.from(call.arguments);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login Screen'),
+        title: Text('Main Screen'),
       ),
       body: Center(
         child: ElevatedButton(
@@ -44,8 +64,10 @@ class LoginScreen extends StatelessWidget {
 class HomeScreen extends StatelessWidget {
   final String username;
   final String password;
+  final List<String> dataList;
 
-  HomeScreen({required this.username, required this.password});
+  HomeScreen(
+      {required this.username, required this.password, required this.dataList});
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +81,7 @@ class HomeScreen extends StatelessWidget {
           children: <Widget>[
             Text('Username: $username'),
             Text('Password: $password'),
+            ...dataList.map((item) => Text(item)).toList(),
           ],
         ),
       ),

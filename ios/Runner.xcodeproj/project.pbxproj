@@ -14,6 +14,7 @@
 		4CF694B92C4A0F4900B22E39 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF694B82C4A0F4900B22E39 /* HomeViewController.swift */; };
 		4CF694BB2C4A148A00B22E39 /* SwiftLoginPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF694BA2C4A148A00B22E39 /* SwiftLoginPlugin.swift */; };
 		4CF694BD2C4A1A3200B22E39 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF694BC2C4A1A3200B22E39 /* LoginViewController.swift */; };
+		4CF694C12C4A58BA00B22E39 /* ListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF694C02C4A58BA00B22E39 /* ListViewController.swift */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
@@ -53,6 +54,7 @@
 		4CF694B82C4A0F4900B22E39 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		4CF694BA2C4A148A00B22E39 /* SwiftLoginPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftLoginPlugin.swift; sourceTree = "<group>"; };
 		4CF694BC2C4A1A3200B22E39 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		4CF694C02C4A58BA00B22E39 /* ListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewController.swift; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 				4CF694B82C4A0F4900B22E39 /* HomeViewController.swift */,
 				4CF694BA2C4A148A00B22E39 /* SwiftLoginPlugin.swift */,
 				4CF694BC2C4A1A3200B22E39 /* LoginViewController.swift */,
+				4CF694C02C4A58BA00B22E39 /* ListViewController.swift */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -286,6 +289,7 @@
 				4CE822C52C492EED0097F818 /* ViewController.swift in Sources */,
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
+				4CF694C12C4A58BA00B22E39 /* ListViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

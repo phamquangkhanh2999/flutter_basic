@@ -6,6 +6,8 @@ class SwiftLoginPlugin: NSObject, FlutterPlugin {
         let channel = FlutterMethodChannel(name: "login_plugin", binaryMessenger: registrar.messenger())
         let instance = SwiftLoginPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
+        
+        NotificationCenter.default.addObserver(instance, selector: #selector(instance.handleDataListFetched(notification:)), name: NSNotification.Name("dataListFetched"), object: nil)
     }
 
     func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -24,11 +26,16 @@ class SwiftLoginPlugin: NSObject, FlutterPlugin {
 
         let loginViewController = LoginViewController()
         loginViewController.modalPresentationStyle = .fullScreen
-        loginViewController.onLoginSuccess = { username, password in
-            // Gửi thông tin người dùng về Flutter
-            result(["username": username, "password": password])
+        loginViewController.onLoginSuccess = {
+            result(nil) // Gửi thông tin đăng nhập về Flutter nếu cần thiết
         }
 
         viewController.present(loginViewController, animated: true, completion: nil)
+    }
+
+    @objc private func handleDataListFetched(notification: Notification) {
+        guard let dataList = notification.userInfo?["dataList"] as? [String] else { return }
+        let channel = FlutterMethodChannel(name: "login_plugin", binaryMessenger: UIApplication.shared.keyWindow!.rootViewController as! FlutterBinaryMessenger)
+        channel.invokeMethod("onDataListFetched", arguments: dataList)
     }
 }

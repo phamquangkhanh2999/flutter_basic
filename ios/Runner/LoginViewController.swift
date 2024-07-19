@@ -1,7 +1,7 @@
 import UIKit
 
 class LoginViewController: UIViewController {
-    var onLoginSuccess: ((String, String) -> Void)?
+    var onLoginSuccess: (() -> Void)?
 
     private let usernameTextField = UITextField()
     private let passwordTextField = UITextField()
@@ -40,14 +40,17 @@ class LoginViewController: UIViewController {
     }
 
     @objc func loginButtonTapped() {
-        // Lấy thông tin từ ô nhập liệu
         let username = usernameTextField.text ?? ""
         let password = passwordTextField.text ?? ""
 
-        // Kiểm tra thông tin đăng nhập
-        // Nếu thành công:
-        onLoginSuccess?(username, password)
-        self.dismiss(animated: true, completion: nil)
+        // Điều hướng đến màn hình Home
+        let homeViewController = HomeViewController()
+        homeViewController.modalPresentationStyle = .fullScreen
+        homeViewController.onDataSend = { dataList in
+            // Gửi danh sách về Flutter
+            NotificationCenter.default.post(name: NSNotification.Name("dataListFetched"), object: nil, userInfo: ["dataList": dataList])
+        }
+        self.present(homeViewController, animated: true, completion: nil)
     }
 
     @objc func goBackButtonTapped() {

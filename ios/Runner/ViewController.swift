@@ -90,8 +90,8 @@ class LoginViewController12: UIViewController {
   }
   
   private func navigateToHome(username: String) {
-    let homeViewController = HomeViewController()
-    homeViewController.username = username
-    navigationController?.pushViewController(homeViewController, animated: true)
+//    let homeViewController = HomeViewController()
+//    homeViewController.username = username
+//    navigationController?.pushViewController(homeViewController, animated: true)
   }
 }
