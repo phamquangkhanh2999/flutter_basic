@@ -1,41 +1,79 @@
 import Flutter
 import UIKit
 
-class SwiftLoginPlugin: NSObject, FlutterPlugin {
-    static func register(with registrar: FlutterPluginRegistrar) {
+public class SwiftLoginPlugin: NSObject, FlutterPlugin {
+    private var flutterResult: FlutterResult?
+
+    public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "login_plugin", binaryMessenger: registrar.messenger())
         let instance = SwiftLoginPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
-        
-        NotificationCenter.default.addObserver(instance, selector: #selector(instance.handleDataListFetched(notification:)), name: NSNotification.Name("dataListFetched"), object: nil)
     }
 
-    func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         if call.method == "showLogin" {
-            showLoginScreen(result: result)
+            flutterResult = result
+            showLoginScreen()
         } else {
             result(FlutterMethodNotImplemented)
         }
     }
 
-    private func showLoginScreen(result: @escaping FlutterResult) {
-        guard let viewController = UIApplication.shared.keyWindow?.rootViewController else {
-            result(FlutterError(code: "UNAVAILABLE", message: "Root view controller unavailable", details: nil))
+    private func showLoginScreen() {
+        guard let rootViewController = UIApplication.shared.keyWindow?.rootViewController else {
             return
         }
 
-        let loginViewController = LoginViewController()
-        loginViewController.modalPresentationStyle = .fullScreen
-        loginViewController.onLoginSuccess = {
-            result(nil) // Gửi thông tin đăng nhập về Flutter nếu cần thiết
+        // Tìm view controller hiện tại đang hiển thị
+        var topController = rootViewController
+        while let presentedVC = topController.presentedViewController {
+            topController = presentedVC
         }
 
-        viewController.present(loginViewController, animated: true, completion: nil)
+        let screen1VC = Screen1ViewController()
+        screen1VC.modalPresentationStyle = .fullScreen
+        screen1VC.onNext = {
+            self.presentNextViewController(from: screen1VC, nextViewController: Screen2ViewController())
+        }
+
+        DispatchQueue.main.async {
+            topController.present(screen1VC, animated: true, completion: nil)
+        }
     }
 
-    @objc private func handleDataListFetched(notification: Notification) {
-        guard let dataList = notification.userInfo?["dataList"] as? [String] else { return }
-        let channel = FlutterMethodChannel(name: "login_plugin", binaryMessenger: UIApplication.shared.keyWindow!.rootViewController as! FlutterBinaryMessenger)
-        channel.invokeMethod("onDataListFetched", arguments: dataList)
+    private func presentNextViewController(from currentViewController: UIViewController, nextViewController: UIViewController) {
+        if let screen = nextViewController as? Screen2ViewController {
+            screen.onNext = {
+                self.presentNextViewController(from: screen, nextViewController: Screen3ViewController())
+            }
+        } else if let screen = nextViewController as? Screen3ViewController {
+            screen.onNext = {
+                self.presentNextViewController(from: screen, nextViewController: Screen4ViewController())
+            }
+        } else if let screen = nextViewController as? Screen4ViewController {
+            screen.onNext = {
+                self.presentNextViewController(from: screen, nextViewController: Screen5ViewController())
+            }
+        } else if let screen = nextViewController as? Screen5ViewController {
+            screen.onDataSend = { data in
+                self.sendDataToFlutter(data)
+                self.dismissAllViewControllers(currentViewController)
+            }
+        }
+        
+        nextViewController.modalPresentationStyle = .fullScreen
+        currentViewController.present(nextViewController, animated: true, completion: nil)
+    }
+
+    private func dismissAllViewControllers(_ viewController: UIViewController) {
+        var vc = viewController
+        while let presentingVC = vc.presentingViewController {
+            vc = presentingVC
+        }
+        vc.dismiss(animated: true, completion: nil)
+    }
+
+    private func sendDataToFlutter(_ data: [String]) {
+        flutterResult?(data)
     }
 }

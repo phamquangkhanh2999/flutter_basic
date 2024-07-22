@@ -1,42 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class MainScreen extends StatefulWidget {
-  @override
-  _MainScreenState createState() => _MainScreenState();
+void main() {
+  runApp(MyApp());
 }
 
-class _MainScreenState extends State<MainScreen> {
-  static const platform = MethodChannel('login_plugin');
-  List<String> dataList = [];
-
+class MyApp extends StatelessWidget {
   @override
-  void initState() {
-    super.initState();
-    platform.setMethodCallHandler(_handleMethod);
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: FirstScreen(),
+      routes: {
+        '/home': (context) => HomeScreen(),
+      },
+    );
   }
+}
 
-  Future<void> _showNativeLogin(BuildContext context) async {
+class FirstScreen extends StatelessWidget {
+  static const platform = MethodChannel('login_plugin');
+
+  void _startLoginProcess(BuildContext context) async {
     try {
-      await platform.invokeMethod('showLogin');
-      // Sau khi đăng nhập thành công, Native iOS sẽ điều hướng đến HomeViewController.
+      final List<dynamic> result = await platform.invokeMethod('showLogin');
+      if (result is List<String>) {
+        Navigator.pushNamed(context, '/home', arguments: result);
+      } else {
+        // Chuyển đổi kết quả thành List<String>
+        final List<String> stringList =
+            result.map((item) => item.toString()).toList();
+        Navigator.pushNamed(context, '/home', arguments: stringList);
+      }
     } on PlatformException catch (e) {
-      print("Failed to show login: ${e.message}");
-    }
-  }
-
-  Future<dynamic> _handleMethod(MethodCall call) async {
-    if (call.method == 'onDataListFetched') {
-      setState(() {
-        dataList = List<String>.from(call.arguments);
-      });
-      // Điều hướng đến màn hình Home với danh sách dữ liệu nhận được
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => HomeScreen(dataList: dataList),
-        ),
-      );
+      print("Failed to invoke method: '${e.message}'.");
     }
   }
 
@@ -44,12 +40,12 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Main Screen'),
+        title: Text('First Screen'),
       ),
       body: Center(
         child: ElevatedButton(
-          onPressed: () => _showNativeLogin(context),
-          child: Text('Login with Native UI'),
+          onPressed: () => _startLoginProcess(context),
+          child: Text('Start Login Process'),
         ),
       ),
     );
@@ -57,38 +53,25 @@ class _MainScreenState extends State<MainScreen> {
 }
 
 class HomeScreen extends StatelessWidget {
-  final List<String> dataList;
-
-  HomeScreen({required this.dataList});
-
   @override
   Widget build(BuildContext context) {
+    final List<String> data =
+        (ModalRoute.of(context)!.settings.arguments as List<dynamic>)
+            .map((item) => item.toString())
+            .toList();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Home Screen'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ...dataList.map((item) => Text(item)).toList(),
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text('Go back!'),
-              ),
-            )
-          ],
-        ),
+      body: ListView.builder(
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(data[index]),
+          );
+        },
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: MainScreen(),
-  ));
 }
